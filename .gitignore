@@ -21,3 +21,13 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+src/leetcode/editor/cn/doc
+out
+.idea
+output
+target
+*.iml
+logs
+.DS_Store
+logDir_IS_UNDEFINED
