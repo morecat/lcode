@@ -68,7 +68,12 @@ public class ExcelSheetColumnTitle{
     
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
+
     public String convertToTitle(int columnNumber) {
+        return convertToTitlePerf(columnNumber);
+    }
+
+    public String convertToTitleBefore(int columnNumber) {
         /*
          * 1 -> 1(26) -> 1 ->A
          * 25 -> 25(26) -> 25 -> Y
@@ -89,6 +94,21 @@ class Solution {
                 mod = 26;
             }
             builder.insert(0, (char) ('A' + mod - 1));
+        } while ((division != 0));
+        return builder.toString();
+    }
+
+    /**
+     * 首258题启发，优化为下
+     */
+    public String convertToTitlePerf(int columnNumber) {
+        StringBuilder builder = new StringBuilder();
+        int division = columnNumber;
+        int mod;
+        do {
+            mod = (division - 1) % 26;
+            division = (division - 1) / 26;
+            builder.insert(0, (char) ('A' + mod));
         } while ((division != 0));
         return builder.toString();
     }
