@@ -67,7 +67,7 @@ public class FindModeInBinarySearchTree{
  */
 class Solution {
     public int[] findMode(TreeNode root) {
-
+        return null;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

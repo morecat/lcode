@@ -43,12 +43,26 @@ public class DetectCapital {
 
     public static void main(String[] args) {
         Solution solution = new DetectCapital().new Solution();
+        print(solution.detectCapitalUse("leetcode"));
+        print(solution.detectCapitalUse("Google"));
+        print(solution.detectCapitalUse("USA"));
+        print(solution.detectCapitalUse("uSA"));
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean detectCapitalUse(String word) {
-
+        if (word.length() == 1){
+            return true;
+        }
+        boolean first = Character.isUpperCase(word.charAt(0));
+        boolean second = Character.isUpperCase(word.charAt(1));
+        for (int i = 2;i<word.length();i++){
+            if (Character.isUpperCase(word.charAt(i)) != second){
+                return false;
+            }
+        }
+        return !(!first && second);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

@@ -36,37 +36,83 @@
 
 package leetcode.editor.cn;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 public class MinimumAbsoluteDifferenceInBst {
 
     public static void main(String[] args) {
         Solution solution = new MinimumAbsoluteDifferenceInBst().new Solution();
+        TreeNode root = new TreeNode(4, new TreeNode(2, new TreeNode(1), new TreeNode(3)), new TreeNode(6));
+        print(solution.getMinimumDifference(root));
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
-    public int getMinimumDifference(TreeNode root) {
 
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     * int val;
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode() {}
+     * TreeNode(int val) { this.val = val; }
+     * TreeNode(int val, TreeNode left, TreeNode right) {
+     * this.val = val;
+     * this.left = left;
+     * this.right = right;
+     * }
+     * }
+     */
+    class Solution {
+
+        int result = Integer.MAX_VALUE;
+        TreeNode pre = null;
+
+        public int getMinimumDifference(TreeNode root) {
+            /**
+             * 如果无根节点 或者 根节点属于一个孤立节点，那么无法进行2个及以上节点的比较，直接返回-1
+             */
+            if (root == null || (root.left == null && root.right == null)) {
+                return -1;
+            }
+            travelNode(root);
+            return result;
+        }
+
+        private void travelNode(TreeNode node) {
+            if (node == null) {
+                return;
+            }
+            travelNode(node.left);
+            if (pre != null){
+                result = Math.min(result, node.val - pre.val);
+            }
+            pre = node;
+            travelNode(node.right);
+        }
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
 
     private static void print(boolean b) {
         System.out.println(b);

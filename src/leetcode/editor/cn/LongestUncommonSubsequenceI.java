@@ -58,7 +58,7 @@ public class LongestUncommonSubsequenceI {
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int findLUSlength(String a, String b) {
-
+        return !a.equals(b) ? Math.max(a.length(), b.length()) : -1;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

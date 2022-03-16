@@ -31,3 +31,5 @@ target
 logs
 .DS_Store
 logDir_IS_UNDEFINED
+src/*.json
+src/*.md
