@@ -1,76 +1,88 @@
-//给定两个字符串 s 和 t，判断它们是否是同构的。 
+//给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。 
 //
-// 如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。 
+// 请你将两个数相加，并以相同形式返回一个表示和的链表。 
 //
-// 每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。 
-//
-// 
-//
-// 示例 1: 
+// 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。 
 //
 // 
-//输入：s = "egg", t = "add"
-//输出：true
+//
+// 示例 1： 
+//
+// 
+//输入：l1 = [2,4,3], l2 = [5,6,4]
+//输出：[7,0,8]
+//解释：342 + 465 = 807.
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：s = "foo", t = "bar"
-//输出：false 
+//输入：l1 = [0], l2 = [0]
+//输出：[0]
+// 
 //
 // 示例 3： 
 //
 // 
-//输入：s = "paper", t = "title"
-//输出：true 
+//输入：l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+//输出：[8,9,9,9,0,0,0,1]
+// 
 //
 // 
 //
 // 提示： 
 //
 // 
-// 可以假设 s 和 t 长度相同。 
+// 每个链表中的节点数在范围 [1, 100] 内 
+// 0 <= Node.val <= 9 
+// 题目数据保证列表表示的数字不含前导零 
 // 
-// Related Topics 哈希表 字符串 👍 415 👎 0
+// Related Topics 递归 链表 数学 👍 7701 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class IsomorphicStrings{
+public class AddTwoNumbers {
+
     public static void main(String[] args) {
-        Solution solution = new IsomorphicStrings().new Solution();
-        print(solution.isIsomorphic("egg", "add"));
-        print(solution.isIsomorphic("foo", "bar"));
-        print(solution.isIsomorphic("paper", "title"));
-        print(solution.isIsomorphic("abcdefghijklmnopqrstuvwxyzva", "abcdefghijklmnopqrstuvwxyzck"));
+        Solution solution = new AddTwoNumbers().new Solution();
     }
-    
+
 //leetcode submit region begin(Prohibit modification and deletion)
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    /**
-     *  双射中如何发现“字符a同时与b，c都存在映射”的情况
-     *  即遍历字符串的时候以遇到的“第一个映射关系”为准，存入这条映射关系，后续遍历过程中判断遇到的映射是否和“第一个映射关系”相同
-     *  即 首先将a和b的映射关系存入 hashmap中，然后当遍历到（a，c）处时，判断（a，c）关系和hash中存储的是否一致
-     */
-    public boolean isIsomorphic(String s, String t) {
-        Map<Character, Character> s2t = new HashMap<Character, Character>();
-        Map<Character, Character> t2s = new HashMap<Character, Character>();
-        int len = s.length();
-        for (int i = 0; i < len; ++i) {
-            char x = s.charAt(i), y = t.charAt(i);
-            if ((s2t.containsKey(x) && s2t.get(x) != y) || (t2s.containsKey(y) && t2s.get(y) != x)) {
-                return false;
-            }
-            s2t.put(x, y);
-            t2s.put(y, x);
-        }
-        return true;
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        return null;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
 
+    public class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode() {
+        }
+
+        ListNode(int val) {
+            this.val = val;
+        }
+
+        ListNode(int val, ListNode next) {
+            this.val = val;
+            this.next = next;
+        }
+    }
 
     private static void print(boolean b) {
         System.out.println(b);
@@ -89,6 +101,18 @@ class Solution {
     }
 
     private static void print(int i) {
+        System.out.println(i);
+    }
+
+    private static void print(byte i) {
+        System.out.println(i);
+    }
+
+    private static void print(char i) {
+        System.out.println(i);
+    }
+
+    private static void print(short i) {
         System.out.println(i);
     }
 
@@ -131,6 +155,13 @@ class Solution {
         System.out.println();
     }
 
+    private static void print(char[] arrays) {
+        for (char item : arrays) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+
     private static void print(Object[] arrays) {
         for (Object item : arrays) {
             System.out.print(item + " ");
@@ -144,4 +175,5 @@ class Solution {
         }
         System.out.println();
     }
+
 }

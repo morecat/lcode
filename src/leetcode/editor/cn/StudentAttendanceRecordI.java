@@ -1,24 +1,36 @@
-//给定两个字符串 s 和 t ，它们只包含小写字母。 
+//给你一个字符串 s 表示一个学生的出勤记录，其中的每个字符用来标记当天的出勤情况（缺勤、迟到、到场）。记录中只含下面三种字符： 
 //
-// 字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。 
+// 
+// 'A'：Absent，缺勤 
+// 'L'：Late，迟到 
+// 'P'：Present，到场 
+// 
 //
-// 请找出在 t 中被添加的字母。 
+// 如果学生能够 同时 满足下面两个条件，则可以获得出勤奖励： 
+//
+// 
+// 按 总出勤 计，学生缺勤（'A'）严格 少于两天。 
+// 学生 不会 存在 连续 3 天或 连续 3 天以上的迟到（'L'）记录。 
+// 
+//
+// 如果学生可以获得出勤奖励，返回 true ；否则，返回 false 。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：s = "abcd", t = "abcde"
-//输出："e"
-//解释：'e' 是那个被添加的字母。
+//输入：s = "PPALLP"
+//输出：true
+//解释：学生缺勤次数少于 2 次，且不存在 3 天或以上的连续迟到记录。
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：s = "", t = "y"
-//输出："y"
+//输入：s = "PPALLL"
+//输出：false
+//解释：学生最后三天连续迟到，所以不满足出勤奖励的条件。
 // 
 //
 // 
@@ -26,56 +38,53 @@
 // 提示： 
 //
 // 
-// 0 <= s.length <= 1000 
-// t.length == s.length + 1 
-// s 和 t 只包含小写字母 
+// 1 <= s.length <= 1000 
+// s[i] 为 'A'、'L' 或 'P' 
 // 
-// Related Topics 位运算 哈希表 字符串 排序 👍 298 👎 0
+// Related Topics 字符串 👍 132 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class FindTheDifference {
+public class StudentAttendanceRecordI {
+
     public static void main(String[] args) {
-        Solution solution = new FindTheDifference().new Solution();
-        print(solution.findTheDifference("abcd", "aybcd"));
+        Solution solution = new StudentAttendanceRecordI().new Solution();
+        print(solution.checkRecord("PPALLP"));
+        print(solution.checkRecord("PPALLL"));
+        print(solution.checkRecord("AA"));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public char findTheDifference(String s, String t) {
-            char res = 0;
-            for (char c:s.toCharArray()){
-                res ^= c;
+        /**
+         * 扫描出勤情况，至少要经历一次for循环，针对L和A的统计可以同时进行
+         * 每次遇到非L字符就重置L计数器，否则计数器将自动累加
+         */
+        public boolean checkRecord(String s) {
+            if (s == null || s.length() == 0) {
+                return false;
             }
-            for (char c:t.toCharArray()){
-                res ^= c;
+            int LCount = 0;
+            int ACount = 0;
+            for (char c : s.toCharArray()) {
+                if (c != 'L') {
+                    if (c == 'A') {
+                        ACount++;
+                    }
+                    LCount = 0;
+                } else {
+                    LCount++;
+                }
+                if (ACount >= 2) {
+                    return false;
+                }
+                if (LCount >= 3) {
+                    return false;
+                }
             }
-            return res;
-
-//            下面是之前写的版本
-//            Map<Character, Integer> map = new HashMap<>();
-//            for (char c : s.toCharArray()) {
-//                Integer num = map.get(c);
-//                if (num == null) {
-//                    num = 0;
-//                }
-//                map.put(c, num + 1);
-//            }
-//            for (char c : t.toCharArray()) {
-//                Integer i = map.get(c);
-//                if (i == null) {
-//                    return c;
-//                } else {
-//                    int ni = i - 1;
-//                    if (ni < 0) {
-//                        return c;
-//                    }
-//                    map.put(c, ni);
-//                }
-//            }
-//            return ' ';
+            return true;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -95,6 +104,10 @@ public class FindTheDifference {
 
     private static void print(long l) {
         System.out.println(l);
+    }
+
+    private static void print(int i) {
+        System.out.println(i);
     }
 
     private static void print(byte i) {
@@ -168,4 +181,5 @@ public class FindTheDifference {
         }
         System.out.println();
     }
+
 }

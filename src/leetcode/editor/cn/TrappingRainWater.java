@@ -1,72 +1,72 @@
-//给定两个字符串 s 和 t，判断它们是否是同构的。 
-//
-// 如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。 
-//
-// 每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。 
+//给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。 
 //
 // 
 //
-// 示例 1: 
+// 示例 1： 
 //
 // 
-//输入：s = "egg", t = "add"
-//输出：true
+//
+// 
+//输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+//输出：6
+//解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：s = "foo", t = "bar"
-//输出：false 
-//
-// 示例 3： 
-//
+//输入：height = [4,2,0,3,2,5]
+//输出：9
 // 
-//输入：s = "paper", t = "title"
-//输出：true 
 //
 // 
 //
 // 提示： 
 //
 // 
-// 可以假设 s 和 t 长度相同。 
+// n == height.length 
+// 1 <= n <= 2 * 10⁴ 
+// 0 <= height[i] <= 10⁵ 
 // 
-// Related Topics 哈希表 字符串 👍 415 👎 0
+// Related Topics 栈 数组 双指针 动态规划 单调栈 👍 3250 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class IsomorphicStrings{
+public class TrappingRainWater {
+
     public static void main(String[] args) {
-        Solution solution = new IsomorphicStrings().new Solution();
-        print(solution.isIsomorphic("egg", "add"));
-        print(solution.isIsomorphic("foo", "bar"));
-        print(solution.isIsomorphic("paper", "title"));
-        print(solution.isIsomorphic("abcdefghijklmnopqrstuvwxyzva", "abcdefghijklmnopqrstuvwxyzck"));
+        Solution solution = new TrappingRainWater().new Solution();
+        int[] arrays = new int[]{4, 2, 3};
+        print(solution.trap(arrays));
     }
-    
+
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    /**
-     *  双射中如何发现“字符a同时与b，c都存在映射”的情况
-     *  即遍历字符串的时候以遇到的“第一个映射关系”为准，存入这条映射关系，后续遍历过程中判断遇到的映射是否和“第一个映射关系”相同
-     *  即 首先将a和b的映射关系存入 hashmap中，然后当遍历到（a，c）处时，判断（a，c）关系和hash中存储的是否一致
-     */
-    public boolean isIsomorphic(String s, String t) {
-        Map<Character, Character> s2t = new HashMap<Character, Character>();
-        Map<Character, Character> t2s = new HashMap<Character, Character>();
-        int len = s.length();
-        for (int i = 0; i < len; ++i) {
-            char x = s.charAt(i), y = t.charAt(i);
-            if ((s2t.containsKey(x) && s2t.get(x) != y) || (t2s.containsKey(y) && t2s.get(y) != x)) {
-                return false;
-            }
-            s2t.put(x, y);
-            t2s.put(y, x);
+    public int trap(int[] height) {
+        if (height == null || height.length == 0) {
+            return 0;
         }
-        return true;
+        int i = 0;
+        int partSum = 0;
+        int sum = 0;
+        while (i < height.length - 1) {
+            int j = i + 1;
+            while (j < height.length && height[i] > height[j]) {
+                partSum += height[i] - height[j];
+                j++;
+            }
+            if (j >= height.length) {
+                partSum = 0;
+                i++;
+            } else {
+                sum += partSum;
+                partSum = 0;
+                i = j;
+            }
+        }
+        return sum;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -89,6 +89,18 @@ class Solution {
     }
 
     private static void print(int i) {
+        System.out.println(i);
+    }
+
+    private static void print(byte i) {
+        System.out.println(i);
+    }
+
+    private static void print(char i) {
+        System.out.println(i);
+    }
+
+    private static void print(short i) {
         System.out.println(i);
     }
 
@@ -131,6 +143,13 @@ class Solution {
         System.out.println();
     }
 
+    private static void print(char[] arrays) {
+        for (char item : arrays) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+
     private static void print(Object[] arrays) {
         for (Object item : arrays) {
             System.out.print(item + " ");
@@ -144,4 +163,5 @@ class Solution {
         }
         System.out.println();
     }
+
 }

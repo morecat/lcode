@@ -1,24 +1,26 @@
-//给定两个字符串 s 和 t ，它们只包含小写字母。 
+//在 MATLAB 中，有一个非常有用的函数 reshape ，它可以将一个 m x n 矩阵重塑为另一个大小不同（r x c）的新矩阵，但保留其原始数据。 
 //
-// 字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。 
 //
-// 请找出在 t 中被添加的字母。 
+// 给你一个由二维数组 mat 表示的 m x n 矩阵，以及两个正整数 r 和 c ，分别表示想要的重构的矩阵的行数和列数。 
+//
+// 重构后的矩阵需要将原始矩阵的所有元素以相同的 行遍历顺序 填充。 
+//
+// 如果具有给定参数的 reshape 操作是可行且合理的，则输出新的重塑矩阵；否则，输出原始矩阵。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：s = "abcd", t = "abcde"
-//输出："e"
-//解释：'e' 是那个被添加的字母。
+//输入：mat = [[1,2],[3,4]], r = 1, c = 4
+//输出：[[1,2,3,4]]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：s = "", t = "y"
-//输出："y"
+//输入：mat = [[1,2],[3,4]], r = 2, c = 4
+//输出：[[1,2],[3,4]]
 // 
 //
 // 
@@ -26,56 +28,52 @@
 // 提示： 
 //
 // 
-// 0 <= s.length <= 1000 
-// t.length == s.length + 1 
-// s 和 t 只包含小写字母 
+// m == mat.length 
+// n == mat[i].length 
+// 1 <= m, n <= 100 
+// -1000 <= mat[i][j] <= 1000 
+// 1 <= r, c <= 300 
 // 
-// Related Topics 位运算 哈希表 字符串 排序 👍 298 👎 0
+// Related Topics 数组 矩阵 模拟 👍 291 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class FindTheDifference {
+public class ReshapeTheMatrix {
+
     public static void main(String[] args) {
-        Solution solution = new FindTheDifference().new Solution();
-        print(solution.findTheDifference("abcd", "aybcd"));
+        Solution solution = new ReshapeTheMatrix().new Solution();
+        int[][] in = new int[][]{{1, 2}, {3, 4}};
+        print(solution.matrixReshape(in, 1, 4));
+        print(solution.matrixReshape(in, 2, 2));
+        print(solution.matrixReshape(in, 2, 4));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public char findTheDifference(String s, String t) {
-            char res = 0;
-            for (char c:s.toCharArray()){
-                res ^= c;
+        public int[][] matrixReshape(int[][] mat, int r, int c) {
+            if (mat == null || mat.length == 0) {
+                return mat;
             }
-            for (char c:t.toCharArray()){
-                res ^= c;
+            int row = mat.length;
+            int column = mat[0].length;
+            if (row * column != r * c) {
+                return mat;
+            }
+            int[][] res = new int[r][c];
+            int rp = 0;
+            int cp = 0;
+            for (int[] rowArray : mat) {
+                for (int item : rowArray) {
+                    res[rp][cp] = item;
+                    if (++cp == c) {
+                        rp++;
+                        cp = 0;
+                    }
+                }
             }
             return res;
-
-//            下面是之前写的版本
-//            Map<Character, Integer> map = new HashMap<>();
-//            for (char c : s.toCharArray()) {
-//                Integer num = map.get(c);
-//                if (num == null) {
-//                    num = 0;
-//                }
-//                map.put(c, num + 1);
-//            }
-//            for (char c : t.toCharArray()) {
-//                Integer i = map.get(c);
-//                if (i == null) {
-//                    return c;
-//                } else {
-//                    int ni = i - 1;
-//                    if (ni < 0) {
-//                        return c;
-//                    }
-//                    map.put(c, ni);
-//                }
-//            }
-//            return ' ';
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -95,6 +93,10 @@ public class FindTheDifference {
 
     private static void print(long l) {
         System.out.println(l);
+    }
+
+    private static void print(int i) {
+        System.out.println(i);
     }
 
     private static void print(byte i) {
@@ -168,4 +170,19 @@ public class FindTheDifference {
         }
         System.out.println();
     }
+
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
 }

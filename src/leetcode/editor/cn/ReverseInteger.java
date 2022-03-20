@@ -1,72 +1,61 @@
-//给定两个字符串 s 和 t，判断它们是否是同构的。 
+//给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。 
 //
-// 如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。 
-//
-// 每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。 
-//
-// 
-//
-// 示例 1: 
+// 如果反转后整数超过 32 位的有符号整数的范围 [−2³¹, 231 − 1] ，就返回 0。 
+//假设环境不允许存储 64 位整数（有符号或无符号）。
 //
 // 
-//输入：s = "egg", t = "add"
-//输出：true
+//
+// 示例 1： 
+//
+// 
+//输入：x = 123
+//输出：321
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：s = "foo", t = "bar"
-//输出：false 
+//输入：x = -123
+//输出：-321
+// 
 //
 // 示例 3： 
 //
 // 
-//输入：s = "paper", t = "title"
-//输出：true 
+//输入：x = 120
+//输出：21
+// 
+//
+// 示例 4： 
+//
+// 
+//输入：x = 0
+//输出：0
+// 
 //
 // 
 //
 // 提示： 
 //
 // 
-// 可以假设 s 和 t 长度相同。 
+// -2³¹ <= x <= 2³¹ - 1 
 // 
-// Related Topics 哈希表 字符串 👍 415 👎 0
+// Related Topics 数学 👍 3430 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class IsomorphicStrings{
+public class ReverseInteger {
+
     public static void main(String[] args) {
-        Solution solution = new IsomorphicStrings().new Solution();
-        print(solution.isIsomorphic("egg", "add"));
-        print(solution.isIsomorphic("foo", "bar"));
-        print(solution.isIsomorphic("paper", "title"));
-        print(solution.isIsomorphic("abcdefghijklmnopqrstuvwxyzva", "abcdefghijklmnopqrstuvwxyzck"));
+        Solution solution = new ReverseInteger().new Solution();
     }
-    
+
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
-    /**
-     *  双射中如何发现“字符a同时与b，c都存在映射”的情况
-     *  即遍历字符串的时候以遇到的“第一个映射关系”为准，存入这条映射关系，后续遍历过程中判断遇到的映射是否和“第一个映射关系”相同
-     *  即 首先将a和b的映射关系存入 hashmap中，然后当遍历到（a，c）处时，判断（a，c）关系和hash中存储的是否一致
-     */
-    public boolean isIsomorphic(String s, String t) {
-        Map<Character, Character> s2t = new HashMap<Character, Character>();
-        Map<Character, Character> t2s = new HashMap<Character, Character>();
-        int len = s.length();
-        for (int i = 0; i < len; ++i) {
-            char x = s.charAt(i), y = t.charAt(i);
-            if ((s2t.containsKey(x) && s2t.get(x) != y) || (t2s.containsKey(y) && t2s.get(y) != x)) {
-                return false;
-            }
-            s2t.put(x, y);
-            t2s.put(y, x);
-        }
-        return true;
+    public int reverse(int x) {
+        return 0;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -89,6 +78,18 @@ class Solution {
     }
 
     private static void print(int i) {
+        System.out.println(i);
+    }
+
+    private static void print(byte i) {
+        System.out.println(i);
+    }
+
+    private static void print(char i) {
+        System.out.println(i);
+    }
+
+    private static void print(short i) {
         System.out.println(i);
     }
 
@@ -131,6 +132,13 @@ class Solution {
         System.out.println();
     }
 
+    private static void print(char[] arrays) {
+        for (char item : arrays) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+
     private static void print(Object[] arrays) {
         for (Object item : arrays) {
             System.out.print(item + " ");
@@ -144,4 +152,5 @@ class Solution {
         }
         System.out.println();
     }
+
 }

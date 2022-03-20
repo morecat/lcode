@@ -74,14 +74,14 @@ class Solution {
         }
         int depth = 0;
         Deque<TreeNode> deque = new LinkedList<>();
-        Deque<TreeNode> cache = new LinkedList<>();
+        Deque<TreeNode> rowSnapshot = new LinkedList<>();
         deque.offer(root);
         while (!deque.isEmpty()) {
             while (!deque.isEmpty()) {
-                cache.offer(deque.poll());
+                rowSnapshot.offer(deque.poll());
             }
             depth++;
-            for (TreeNode node : cache) {
+            for (TreeNode node : rowSnapshot) {
                 if (node.left == null && node.right == null) {
                     return depth;
                 } else if (node.left != null && node.right == null) {
@@ -93,7 +93,7 @@ class Solution {
                     deque.offer(node.right);
                 }
             }
-            cache.clear();
+            rowSnapshot.clear();
         }
         return depth;
     }

@@ -1,24 +1,19 @@
-//给定两个字符串 s 和 t ，它们只包含小写字母。 
-//
-// 字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。 
-//
-// 请找出在 t 中被添加的字母。 
+//给定一个字符串 s ，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：s = "abcd", t = "abcde"
-//输出："e"
-//解释：'e' 是那个被添加的字母。
+//输入：s = "Let's take LeetCode contest"
+//输出："s'teL ekat edoCteeL tsetnoc"
 // 
 //
-// 示例 2： 
+// 示例 2: 
 //
 // 
-//输入：s = "", t = "y"
-//输出："y"
+//输入： s = "God Ding"
+//输出："doG gniD"
 // 
 //
 // 
@@ -26,56 +21,62 @@
 // 提示： 
 //
 // 
-// 0 <= s.length <= 1000 
-// t.length == s.length + 1 
-// s 和 t 只包含小写字母 
+// 1 <= s.length <= 5 * 10⁴ 
+// s 包含可打印的 ASCII 字符。 
+// s 不包含任何开头或结尾空格。 
+// s 里 至少 有一个词。 
+// s 中的所有单词都用一个空格隔开。 
 // 
-// Related Topics 位运算 哈希表 字符串 排序 👍 298 👎 0
+// Related Topics 双指针 字符串 👍 416 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class FindTheDifference {
+public class ReverseWordsInAStringIii {
+
     public static void main(String[] args) {
-        Solution solution = new FindTheDifference().new Solution();
-        print(solution.findTheDifference("abcd", "aybcd"));
+        Solution solution = new ReverseWordsInAStringIii().new Solution();
+        print(solution.reverseWords("Let's take LeetCode contest"));
+        print(solution.reverseWords("God Ding"));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public char findTheDifference(String s, String t) {
-            char res = 0;
-            for (char c:s.toCharArray()){
-                res ^= c;
-            }
-            for (char c:t.toCharArray()){
-                res ^= c;
-            }
-            return res;
 
-//            下面是之前写的版本
-//            Map<Character, Integer> map = new HashMap<>();
-//            for (char c : s.toCharArray()) {
-//                Integer num = map.get(c);
-//                if (num == null) {
-//                    num = 0;
-//                }
-//                map.put(c, num + 1);
-//            }
-//            for (char c : t.toCharArray()) {
-//                Integer i = map.get(c);
-//                if (i == null) {
-//                    return c;
-//                } else {
-//                    int ni = i - 1;
-//                    if (ni < 0) {
-//                        return c;
-//                    }
-//                    map.put(c, ni);
-//                }
-//            }
-//            return ' ';
+        /**
+         * 扫描过程中
+         * 当指向的是第一个空格时，此时应该执行反转，此时bp指针一定位于单词的首字母处
+         * 但是为了避免扫描到第二个连续空格时，还执行上述逻辑，因此在上述逻辑的末尾应该移动bp指针的位置，即bp = i
+         */
+        public String reverseWords(String s) {
+            char[] chars = s.toCharArray();
+            int bp = 0;
+            int ep = bp;
+            for (int i = 0; i < chars.length; i++) {
+                if (chars[i] == ' ' && chars[bp] != ' ') {
+                    ep = i - 1;
+                    reverseWord(chars, bp, ep);
+                    bp = i;
+                } else if (chars[i] != ' ' && chars[bp] == ' ') {
+                    bp = i;
+                }
+            }
+            reverseWord(chars, bp, chars.length - 1);
+            return new String(chars);
+        }
+
+        private void reverseWord(char[] chars, int begin, int end) {
+            int bp = begin;
+            int ep = end;
+            char tmp;
+            while (bp < ep) {
+                tmp = chars[bp];
+                chars[bp] = chars[ep];
+                chars[ep] = tmp;
+                bp++;
+                ep--;
+            }
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -95,6 +96,10 @@ public class FindTheDifference {
 
     private static void print(long l) {
         System.out.println(l);
+    }
+
+    private static void print(int i) {
+        System.out.println(i);
     }
 
     private static void print(byte i) {
@@ -168,4 +173,5 @@ public class FindTheDifference {
         }
         System.out.println();
     }
+
 }

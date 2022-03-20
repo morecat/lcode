@@ -1,81 +1,72 @@
-//给定两个字符串 s 和 t ，它们只包含小写字母。 
+//给你一个 m x n 的矩阵 M ，初始化时所有的 0 和一个操作数组 op ，其中 ops[i] = [ai, bi] 意味着当所有的 0 <= x < 
+//ai 和 0 <= y < bi 时， M[x][y] 应该加 1。 
 //
-// 字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。 
-//
-// 请找出在 t 中被添加的字母。 
-//
-// 
-//
-// 示例 1： 
-//
-// 
-//输入：s = "abcd", t = "abcde"
-//输出："e"
-//解释：'e' 是那个被添加的字母。
-// 
-//
-// 示例 2： 
-//
-// 
-//输入：s = "", t = "y"
-//输出："y"
-// 
+// 在 执行完所有操作后 ，计算并返回 矩阵中最大整数的个数 。 
 //
 // 
 //
-// 提示： 
+// 示例 1: 
 //
 // 
-// 0 <= s.length <= 1000 
-// t.length == s.length + 1 
-// s 和 t 只包含小写字母 
+//
 // 
-// Related Topics 位运算 哈希表 字符串 排序 👍 298 👎 0
+//输入: m = 3, n = 3，ops = [[2,2],[3,3]]
+//输出: 4
+//解释: M 中最大的整数是 2, 而且 M 中有4个值为2的元素。因此返回 4。
+// 
+//
+// 示例 2: 
+//
+// 
+//输入: m = 3, n = 3, ops = [[2,2],[3,3],[3,3],[3,3],[2,2],[3,3],[3,3],[3,3],[2,2]
+//,[3,3],[3,3],[3,3]]
+//输出: 4
+// 
+//
+// 示例 3: 
+//
+// 
+//输入: m = 3, n = 3, ops = []
+//输出: 9
+// 
+//
+// 
+//
+// 提示: 
+//
+// 
+//
+// 
+// 1 <= m, n <= 4 * 10⁴ 
+// 0 <= ops.length <= 10⁴ 
+// ops[i].length == 2 
+// 1 <= ai <= m 
+// 1 <= bi <= n 
+// 
+// Related Topics 数组 数学 👍 156 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class FindTheDifference {
+public class RangeAdditionIi {
+
     public static void main(String[] args) {
-        Solution solution = new FindTheDifference().new Solution();
-        print(solution.findTheDifference("abcd", "aybcd"));
+        Solution solution = new RangeAdditionIi().new Solution();
+        int[][] array = new int[][]{{2, 2}, {3, 3}};
+        print(solution.maxCount(3, 3, array));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public char findTheDifference(String s, String t) {
-            char res = 0;
-            for (char c:s.toCharArray()){
-                res ^= c;
+        public int maxCount(int m, int n, int[][] ops) {
+            int minRow = m;
+            int minCol = n;
+            for (int[] op : ops) {
+                minRow = Math.min(minRow, op[0]);
+                minCol = Math.min(minCol, op[1]);
             }
-            for (char c:t.toCharArray()){
-                res ^= c;
-            }
-            return res;
-
-//            下面是之前写的版本
-//            Map<Character, Integer> map = new HashMap<>();
-//            for (char c : s.toCharArray()) {
-//                Integer num = map.get(c);
-//                if (num == null) {
-//                    num = 0;
-//                }
-//                map.put(c, num + 1);
-//            }
-//            for (char c : t.toCharArray()) {
-//                Integer i = map.get(c);
-//                if (i == null) {
-//                    return c;
-//                } else {
-//                    int ni = i - 1;
-//                    if (ni < 0) {
-//                        return c;
-//                    }
-//                    map.put(c, ni);
-//                }
-//            }
-//            return ' ';
+            return minCol * minRow;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -95,6 +86,10 @@ public class FindTheDifference {
 
     private static void print(long l) {
         System.out.println(l);
+    }
+
+    private static void print(int i) {
+        System.out.println(i);
     }
 
     private static void print(byte i) {
@@ -168,4 +163,5 @@ public class FindTheDifference {
         }
         System.out.println();
     }
+
 }

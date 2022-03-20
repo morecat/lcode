@@ -1,37 +1,57 @@
-//给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。 
+//
+// 
+// 给你两棵二叉树 root 和 subRoot 。检验 root 中是否包含和 subRoot 具有相同结构和节点值的子树。如果存在，返回 true ；否则
+//，返回 false 。 
+//
+// 二叉树 tree 的一棵子树包括 tree 的某个节点和这个节点的所有后代节点。tree 也可以看做它自身的一棵子树。 
 //
 // 
 //
-// 示例 : 
-//给定二叉树 
-//
-//           1
-//         / \
-//        2   3
-//       / \     
-//      4   5    
-// 
-//
-// 返回 3, 它的长度是路径 [4,2,1,3] 或者 [5,2,1,3]。 
+// 示例 1： 
 //
 // 
+//输入：root = [3,4,5,1,2], subRoot = [4,1,2]
+//输出：true
+// 
 //
-// 注意：两结点之间的路径长度是以它们之间边的数目表示。 
-// Related Topics 树 深度优先搜索 二叉树 
-// 👍 945 👎 0
+// 示例 2： 
+//
+// 
+//输入：root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]
+//输出：false
+// 
+//
+// 
+//
+// 提示： 
+//
+// 
+// root 树上的节点数量范围是 [1, 2000] 
+// subRoot 树上的节点数量范围是 [1, 1000] 
+// -10⁴ <= root.val <= 10⁴ 
+// -10⁴ <= subRoot.val <= 10⁴ 
+// 
+// 
+// 
+// Related Topics 树 深度优先搜索 二叉树 字符串匹配 哈希函数 👍 675 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class DiameterOfBinaryTree {
+public class SubtreeOfAnotherTree {
 
     public static void main(String[] args) {
-        Solution solution = new DiameterOfBinaryTree().new Solution();
-        TreeNode root = new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3));
-        TreeNode root1 = new TreeNode(1, new TreeNode(2), null);
-//        print(solution.diameterOfBinaryTree(root));
-        print(solution.diameterOfBinaryTree(root1));
+        Solution solution = new SubtreeOfAnotherTree().new Solution();
+        TreeNode root = new TreeNode(3, new TreeNode(4, new TreeNode(1), new TreeNode(2)), new TreeNode(5));
+        TreeNode subRoot = new TreeNode(4, new TreeNode(1), new TreeNode(2));
+        TreeNode root1 = new TreeNode(1,new TreeNode(1),null);
+        TreeNode subRoot1 = new TreeNode(1);
+        TreeNode root2 = new TreeNode(1);
+        TreeNode subRoot2 = new TreeNode(0);
+//        print(solution.isSubtree(root, subRoot));
+//        print(solution.isSubtree(root1, subRoot1));
+        print(solution.isSubtree(root2, subRoot2));
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -52,59 +72,20 @@ public class DiameterOfBinaryTree {
      * }
      */
     class Solution {
-
-        int maxRoute = 0;
-
-        /**
-         * 虽然最大路径长度不一定经过根节点，但是一定会通过其中某个子树的根节点
-         * 因此把所有子树的“当前子树通过根节点的最大路径长”都计算出来，然后比较最大值即可
-         * “当前子树通过根节点的最大路径长” = 左子树高度 + 右子树高度 + 2
-         */
-        public int diameterOfBinaryTree(TreeNode root) {
-            if (root == null || (root.left == null && root.right == null)) {
-                return 0;
+        public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+            if (root == null){
+                return false;
             }
-            travelAllNode(root);
-            return maxRoute;
+            return sameTree(root, subRoot) || isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
         }
 
-        /**
-         * 遍历所有节点，并获取“通过每个的节点的最大路径长”，然后取最大值
-         */
-        private void travelAllNode(TreeNode node) {
-            if (node == null) {
-                return;
+        private boolean sameTree(TreeNode root, TreeNode subRoot) {
+            if (root == null && subRoot == null) {
+                return true;
+            } else if (root == null || subRoot == null) {
+                return false;
             }
-            maxRoute = Math.max(maxRoute, maxRouteCrossNode(node));
-            travelAllNode(node.left);
-            travelAllNode(node.right);
-        }
-
-        /**
-         * 获取通过当前节点的最大路径长度
-         */
-        private int maxRouteCrossNode(TreeNode node) {
-            if (node.left == null && node.right == null) {
-                return 0;
-            }
-            int sum = 0;
-            if (node.left != null) {
-                sum += deepOfTree(node.left) + 1;
-            }
-            if (node.right != null) {
-                sum += deepOfTree(node.right) + 1;
-            }
-            return sum;
-        }
-
-        /**
-         * 获取树的高度
-         */
-        private int deepOfTree(TreeNode node) {
-            if (node == null || (node.left == null && node.right == null)) {
-                return 0;
-            }
-            return Math.max(deepOfTree(node.left), deepOfTree(node.right)) + 1;
+            return root.val == subRoot.val && sameTree(root.left, subRoot.left) && sameTree(root.right, subRoot.right);
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
