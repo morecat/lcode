@@ -1,59 +1,79 @@
-//给你单链表的头节点 head ，请你反转链表，并返回反转后的链表。
+//给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。 
+//
+// k 是一个正整数，它的值小于或等于链表的长度。 
+//
+// 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。 
+//
+// 进阶： 
+//
 // 
+// 你可以设计一个只使用常数额外空间的算法来解决此问题吗？ 
+// 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。 
 // 
+//
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：head = [1,2,3,4,5]
-//输出：[5,4,3,2,1]
+//输入：head = [1,2,3,4,5], k = 2
+//输出：[2,1,4,3,5]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：head = [1,2]
-//输出：[2,1]
+//输入：head = [1,2,3,4,5], k = 3
+//输出：[3,2,1,4,5]
 // 
 //
 // 示例 3： 
 //
 // 
-//输入：head = []
-//输出：[]
+//输入：head = [1,2,3,4,5], k = 1
+//输出：[1,2,3,4,5]
 // 
 //
+// 示例 4： 
+//
+// 
+//输入：head = [1], k = 1
+//输出：[1]
+// 
+//
+// 
 // 
 //
 // 提示： 
 //
 // 
-// 链表中节点的数目范围是 [0, 5000] 
-// -5000 <= Node.val <= 5000 
+// 列表中节点的数量在范围 sz 内 
+// 1 <= sz <= 5000 
+// 0 <= Node.val <= 1000 
+// 1 <= k <= sz 
 // 
-//
-// 
-//
-// 进阶：链表可以选用迭代或递归方式完成反转。你能否用两种方法解决这道题？ 
-// 
-// 
-// Related Topics 递归 链表 👍 2184 👎 0
+// Related Topics 递归 链表 👍 1550 👎 0
 
 package leetcode.editor.cn;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 
-public class ReverseLinkedList {
+public class ReverseNodesInKGroup {
+
     public static void main(String[] args) {
-        Solution solution = new ReverseLinkedList().new Solution();
+        Solution solution = new ReverseNodesInKGroup().new Solution();
         ListNode node1 = new ListNode(1);
         ListNode node2 = new ListNode(2);
         ListNode node3 = new ListNode(3);
+        ListNode node4 = new ListNode(4);
+        ListNode node5 = new ListNode(5);
         node1.next = node2;
         node2.next = node3;
-        solution.print(node1);
-        solution.print(solution.reverseList1(node1));
+        node3.next = node4;
+        node4.next = node5;
+        solution.reverseKGroup(node1, 1);
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -70,74 +90,47 @@ public class ReverseLinkedList {
      */
     class Solution {
 
-        public void print(ListNode node) {
-            while (node != null) {
-                System.out.print(node.val + " ");
-                node = node.next;
-            }
-        }
-
         /**
-         * 存在迭代和递归2种解法
+         * 把每一组想象成一个节点，因此要保留指针指向前中后3个组
          */
-        public ListNode reverseList(ListNode head) {
-            return reverseList3(head);
-        }
-
-        /**
-         * 递归方式
-         */
-        public ListNode reverseList1(ListNode head) {
-            // 1. head.next == null 为递归终止条件，head == null是为了兼容初始输入为null的情况
-            if (head == null || head.next == null) {
-                return head;
-            }
-            // 2. 完成后面数据的递归反转
-            ListNode tail = reverseList1(head.next);
-            // 3. 重建当前节点和下个节点的连接
-            head.next.next = head;
-            // 4. 此时会出现一个双元素组成的环，如果没有下面的 head.next = null;的话，
-            // 链表原来的头节点会和第二个节点之间产生小环，那样就需要代码额外处理，写起来比较麻烦，不如在处理每个元素的时候都保证没有环结构
-//            head.next = null;
-            return tail;
-        }
-
-        /**
-         * 迭代方式 2.0
-         */
-        public ListNode reverseList3(ListNode node) {
-            ListNode prev = null;
-            ListNode curr = node;
-            ListNode next = node.next;
-            while (curr != null) {
-                curr.next = prev;
-                prev = curr;
-                curr = next;
-                if (next != null) {
-                    next = next.next;
-                }
-            }
-            return prev;
-        }
-
-        /**
-         * 迭代方式 1.0
-         * 需要3个指针 prev curr next, 其中 prev 和 curr 负责重建链表节点指向，next用于暂存下个节点，以便重建节点指向后能够成功找到原来的下个节点
-         */
-        public ListNode reverseList2(ListNode head) {
-            ListNode prev = null;
+        public ListNode reverseKGroup(ListNode head, int k) {
+            ListNode add = new ListNode();
+            add.next = head;
+            ListNode prev = add;
             ListNode curr = head;
-            ListNode next = null;
+            ListNode tail = prev;
             while (curr != null) {
-                // 1.先暂存原来的下个节点
-                next = curr.next;
-                // 2.重建节点间指向
+                for (int i = 0; i < k; i++) {
+                    tail = tail.next;
+                    if (tail == null) {
+                        return add.next;
+                    }
+                }
+                // 1.先完成本组的反转
+                reverse(curr, tail);
+                // 2.修复上一组和本组的连接
+                prev.next = tail;
+                // 3.移动指针
+                prev = curr;
+                curr = curr.next;
+                tail = prev;
+            }
+            return add.next;
+        }
+
+        /**
+         * @param head 不能为null
+         * @param tail 不能为null
+         */
+        private void reverse(ListNode head, ListNode tail) {
+            ListNode prev = tail.next;
+            ListNode curr = head;
+            while (prev != tail) {
+                ListNode next = curr.next;
                 curr.next = prev;
-                // 3.向后遍历
                 prev = curr;
                 curr = next;
             }
-            return prev;
         }
 
 
@@ -181,6 +174,18 @@ public class ReverseLinkedList {
         System.out.println(i);
     }
 
+    private static void print(byte i) {
+        System.out.println(i);
+    }
+
+    private static void print(char i) {
+        System.out.println(i);
+    }
+
+    private static void print(short i) {
+        System.out.println(i);
+    }
+
     private static void print(String str) {
         System.out.println(str);
     }
@@ -220,6 +225,13 @@ public class ReverseLinkedList {
         System.out.println();
     }
 
+    private static void print(char[] arrays) {
+        for (char item : arrays) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+
     private static void print(Object[] arrays) {
         for (Object item : arrays) {
             System.out.print(item + " ");
@@ -230,6 +242,20 @@ public class ReverseLinkedList {
     private static <T> void print(Collection<T> collection) {
         for (T item : collection) {
             System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
         }
         System.out.println();
     }
