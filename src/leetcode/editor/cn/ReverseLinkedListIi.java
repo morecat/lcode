@@ -1,31 +1,19 @@
-//给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。 
-//
-// 请你将两个数相加，并以相同形式返回一个表示和的链表。 
-//
-// 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。 
-//
+//给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链
+//表节点，返回 反转后的链表 。
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：l1 = [2,4,3], l2 = [5,6,4]
-//输出：[7,0,8]
-//解释：342 + 465 = 807.
+//输入：head = [1,2,3,4,5], left = 2, right = 4
+//输出：[1,4,3,2,5]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：l1 = [0], l2 = [0]
-//输出：[0]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
-//输出：[8,9,9,9,0,0,0,1]
+//输入：head = [5], left = 1, right = 1
+//输出：[5]
 // 
 //
 // 
@@ -33,20 +21,25 @@
 // 提示： 
 //
 // 
-// 每个链表中的节点数在范围 [1, 100] 内 
-// 0 <= Node.val <= 9 
-// 题目数据保证列表表示的数字不含前导零 
+// 链表中节点数目为 n 
+// 1 <= n <= 500 
+// -500 <= Node.val <= 500 
+// 1 <= left <= right <= n 
 // 
-// Related Topics 递归 链表 数学 👍 7701 👎 0
+//
+// 
+//
+// 进阶： 你可以使用一趟扫描完成反转吗？ 
+// Related Topics 链表 👍 1225 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class AddTwoNumbers {
+public class ReverseLinkedListIi {
 
     public static void main(String[] args) {
-        Solution solution = new AddTwoNumbers().new Solution();
+        Solution solution = new ReverseLinkedListIi().new Solution();
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
@@ -62,45 +55,47 @@ public class AddTwoNumbers {
      * }
      */
     class Solution {
-        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-            ListNode fakeHead = new ListNode(-1);
-            ListNode r = fakeHead;
-            int carry = 0;
-            int sum = 0;
-            while (l1 != null && l2 != null) {
-                sum = l1.val + l2.val + carry;
-                carry = sum / 10;
-                r.next = new ListNode(sum % 10);
-                r = r.next;
-                l1 = l1.next;
-                l2 = l2.next;
-            }
-            if (l1 != null) {
-                while (l1 != null) {
-                    sum = l1.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l1 = l1.next;
+        public ListNode reverseBetween(ListNode head, int left, int right) {
+            int i = 1, j = 1;
+            ListNode leftPrev = null;
+            ListNode leftNode = head;
+            ListNode rightNode = head;
+            while (i < left || j < right) {
+                if (i < left) {
+                    leftPrev = leftNode;
+                    leftNode = leftNode.next;
                 }
+                if (j < right) {
+                    rightNode = rightNode.next;
+                }
+                i++;
+                j++;
+            }
+            ListNode rightBehind = rightNode.next;
+            reverse(leftNode, rightNode);
+            leftNode.next = rightBehind;
+            if (leftPrev != null) {
+                leftPrev.next = rightNode;
+                return head;
             } else {
-                while (l2 != null) {
-                    sum = l2.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l2 = l2.next;
-                }
+                return rightNode;
             }
-            if (carry != 0) {
-                r.next = new ListNode(carry);
+        }
+
+        private void reverse(ListNode from, ListNode to) {
+            ListNode pre = null;
+            ListNode hp = from;
+            while (pre != to) {
+                ListNode save = hp.next;
+                hp.next = pre;
+                pre = hp;
+                hp = save;
             }
-            return fakeHead.next;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
 
-    public class ListNode {
+    public static class ListNode {
         int val;
         ListNode next;
 
@@ -209,4 +204,17 @@ public class AddTwoNumbers {
         System.out.println();
     }
 
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
 }

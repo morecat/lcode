@@ -1,29 +1,37 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
+//给你两个单词 word1 和 word2， 请返回将 word1 转换成 word2 所使用的最少操作数 。 
 //
-// 注意：答案中不可以包含重复的三元组。 
+// 你可以对一个单词进行如下三种操作： 
+//
+// 
+// 插入一个字符 
+// 删除一个字符 
+// 替换一个字符 
+// 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：word1 = "horse", word2 = "ros"
+//输出：3
+//解释：
+//horse -> rorse (将 'h' 替换为 'r')
+//rorse -> rose (删除 'r')
+//rose -> ros (删除 'e')
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：nums = [0]
-//输出：[]
+//输入：word1 = "intention", word2 = "execution"
+//输出：5
+//解释：
+//intention -> inention (删除 't')
+//inention -> enention (将 'i' 替换为 'e')
+//enention -> exention (将 'n' 替换为 'x')
+//exention -> exection (将 'n' 替换为 'c')
+//exection -> execution (插入 'u')
 // 
 //
 // 
@@ -31,74 +39,51 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// 0 <= word1.length, word2.length <= 500 
+// word1 和 word2 由小写英文字母组成 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 字符串 动态规划 👍 2283 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class EditDistance {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new EditDistance().new Solution();
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
-                return new ArrayList<>();
+        public int minDistance(String word1, String word2) {
+            // 极端数据优化
+            if (word1.length() * word2.length() == 0) {
+                return Math.max(word1.length(), word2.length());
             }
-            Arrays.sort(nums);
-
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
-                }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
+            int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+            // 初始化
+            for (int i = 0; i < dp.length; i++) {
+                dp[i][0] = i;
+            }
+            for (int i = 0; i < dp[0].length; i++) {
+                dp[0][i] = i;
+            }
+            // 循环执行 状态转移方程
+            for (int i = 1; i < dp.length; i++) {
+                for (int j = 1; j < dp[0].length; j++) {
+                    int i1 = dp[i - 1][j] + 1;
+                    int i2 = dp[i][j - 1] + 1;
+                    int i3 = dp[i - 1][j - 1];
+                    if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
+                        i3++;
                     }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
-                    }
+                    dp[i][j] = i3;
+                    dp[i][j] = Math.min(dp[i][j], i2);
+                    dp[i][j] = Math.min(dp[i][j], i1);
                 }
             }
-            return res;
+            return dp[word1.length()][word2.length()];
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

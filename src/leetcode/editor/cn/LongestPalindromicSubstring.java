@@ -1,29 +1,20 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
-//
-// 注意：答案中不可以包含重复的三元组。 
+//给你一个字符串 s，找到 s 中最长的回文子串。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：s = "babad"
+//输出："bab"
+//解释："aba" 同样是符合题意的答案。
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：nums = [0]
-//输出：[]
+//输入：s = "cbbd"
+//输出："bb"
 // 
 //
 // 
@@ -31,74 +22,62 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// 1 <= s.length <= 1000 
+// s 仅由数字和英文字母组成 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 字符串 动态规划 👍 4994 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
+import java.util.regex.*;
 
-public class ThreeSum {
+public class LongestPalindromicSubstring {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new LongestPalindromicSubstring().new Solution();
+        print(solution.longestPalindrome("babad"));
+        print(solution.longestPalindrome("cbbd"));
+        print(solution.longestPalindrome("bb"));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
 
-        /*
-         * 双指针
+        /**
+         * 以开始坐标，结束坐标为维度构建动态规划空间
+         * 为什么不能分别以begin,end作为内外循环的指针
+         * 因为计算dp的时候依赖dp[i+1][j-1]，采用begin,end无法保证dp[i+1][j-1]已被计算过
          */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
-                return new ArrayList<>();
+        public String longestPalindrome(String s) {
+            boolean[][] dp = new boolean[s.length()][s.length()];
+            int maxLen = 1;
+            int begin = 0;
+            for (int i = 0; i < s.length(); i++) {
+                dp[i][i] = true;
             }
-            Arrays.sort(nums);
-
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
-                }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
+            for (int l = 2; l <= s.length(); l++) {
+                for (int i = 0; i < s.length(); i++) {
+                    int end = i + l - 1;
+                    if (end >= s.length()) {
                         continue;
                     }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
+                    if (s.charAt(i) != s.charAt(end)) {
+                        dp[i][end] = false;
+                    } else {
+                        if (l < 3) {
+                            dp[i][end] = true;
+                        } else {
+                            dp[i][end] = dp[i + 1][end - 1];
+                        }
                     }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
+                    if (dp[i][end] && l > maxLen) {
+                        maxLen = l;
+                        begin = i;
                     }
                 }
             }
-            return res;
+            return s.substring(begin, begin + maxLen);
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

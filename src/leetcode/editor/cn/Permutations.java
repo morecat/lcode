@@ -1,29 +1,26 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
-//
-// 注意：答案中不可以包含重复的三元组。 
+//给定一个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：nums = [1,2,3]
+//输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
+//输入：nums = [0,1]
+//输出：[[0,1],[1,0]]
 // 
 //
 // 示例 3： 
 //
 // 
-//输入：nums = [0]
-//输出：[]
+//输入：nums = [1]
+//输出：[[1]]
 // 
 //
 // 
@@ -31,74 +28,52 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// 1 <= nums.length <= 6 
+// -10 <= nums[i] <= 10 
+// nums 中的所有整数 互不相同 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 数组 回溯 👍 1908 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class Permutations {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new Permutations().new Solution();
+        print(solution.permute(new int[]{1, 2, 3}));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
+        public List<List<Integer>> permute(int[] nums) {
+            List<Integer> input = new ArrayList<>();
+            for (int num : nums) {
+                input.add(num);
+            }
+            return sort(input);
+        }
 
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
+        private List<List<Integer>> sort(List<Integer> list) {
+            List<List<Integer>> r = new ArrayList<>();
+            if (list.size() == 0) {
                 return new ArrayList<>();
             }
-            Arrays.sort(nums);
-
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
-                }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
-                    }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
-                    }
-                }
+            if (list.size() == 1) {
+                r.add(list);
+                return r;
             }
-            return res;
+            for (int i = 0; i < list.size(); i++) {
+                List<Integer> input = new ArrayList<>(list);
+                int one = input.remove(i);
+                List<List<Integer>> res = sort(input);
+                for (List<Integer> l : res) {
+                    l.add(0, one);
+                }
+                r.addAll(res);
+            }
+            return r;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

@@ -1,29 +1,33 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
+//给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。 
 //
-// 注意：答案中不可以包含重复的三元组。 
+// 岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。 
+//
+// 此外，你可以假设该网格的四条边均被水包围。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：grid = [
+//  ["1","1","1","1","0"],
+//  ["1","1","0","1","0"],
+//  ["1","1","0","0","0"],
+//  ["0","0","0","0","0"]
+//]
+//输出：1
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：nums = [0]
-//输出：[]
+//输入：grid = [
+//  ["1","1","0","0","0"],
+//  ["1","1","0","0","0"],
+//  ["0","0","1","0","0"],
+//  ["0","0","0","1","1"]
+//]
+//输出：3
 // 
 //
 // 
@@ -31,74 +35,67 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// m == grid.length 
+// n == grid[i].length 
+// 1 <= m, n <= 300 
+// grid[i][j] 的值为 '0' 或 '1' 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 深度优先搜索 广度优先搜索 并查集 数组 矩阵 👍 1644 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class NumberOfIslands {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new NumberOfIslands().new Solution();
+        char[][] input = new char[][]{
+                {'1', '1', '1', '1', '0'},
+                {'1', '1', '0', '1', '0'},
+                {'1', '1', '0', '0', '0'},
+                {'0', '0', '0', '0', '0'}
+        };
+        print(solution.numIslands(input));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
 
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
-                return new ArrayList<>();
-            }
-            Arrays.sort(nums);
+        private int[][] orders = new int[][]{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
-                }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
-                    }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
+        public int numIslands(char[][] grid) {
+            if (grid == null || grid.length == 0 || grid[0].length == 0) {
+                return 0;
+            }
+            int counter = 0;
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (grid[i][j] == '1') {
+                        counter++;
+                        travel(grid, i, j);
                     }
                 }
             }
-            return res;
+            return counter;
+        }
+
+        private void travel(char[][] grid, int i, int j) {
+            if (outBound(grid, i, j) || cantTravel(grid, i, j)) {
+                return;
+            }
+            grid[i][j] = '2';
+            for (int[] order : orders) {
+                travel(grid, i + order[0], j + order[1]);
+            }
+        }
+
+        private boolean outBound(char[][] grid, int i, int j) {
+            return i < 0 || j < 0 || i >= grid.length || j >= grid[0].length;
+        }
+
+        private boolean cantTravel(char[][] grid, int i, int j) {
+            return !(grid[i][j] == '1');
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

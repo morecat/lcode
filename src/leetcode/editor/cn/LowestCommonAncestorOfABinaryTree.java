@@ -1,31 +1,31 @@
-//给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。 
+//给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。 
 //
-// 请你将两个数相加，并以相同形式返回一个表示和的链表。 
-//
-// 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。 
+// 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（
+//一个节点也可以是它自己的祖先）。” 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：l1 = [2,4,3], l2 = [5,6,4]
-//输出：[7,0,8]
-//解释：342 + 465 = 807.
+//输入：root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+//输出：3
+//解释：节点 5 和节点 1 的最近公共祖先是节点 3 。
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：l1 = [0], l2 = [0]
-//输出：[0]
+//输入：root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+//输出：5
+//解释：节点 5 和节点 4 的最近公共祖先是节点 5 。因为根据定义最近公共祖先节点可以为节点本身。
 // 
 //
 // 示例 3： 
 //
 // 
-//输入：l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
-//输出：[8,9,9,9,0,0,0,1]
+//输入：root = [1,2], p = 1, q = 2
+//输出：1
 // 
 //
 // 
@@ -33,87 +33,66 @@
 // 提示： 
 //
 // 
-// 每个链表中的节点数在范围 [1, 100] 内 
-// 0 <= Node.val <= 9 
-// 题目数据保证列表表示的数字不含前导零 
+// 树中节点数目在范围 [2, 10⁵] 内。 
+// -10⁹ <= Node.val <= 10⁹ 
+// 所有 Node.val 互不相同 。 
+// p != q 
+// p 和 q 均存在于给定的二叉树中。 
 // 
-// Related Topics 递归 链表 数学 👍 7701 👎 0
+// Related Topics 树 深度优先搜索 二叉树 👍 1660 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class AddTwoNumbers {
+public class LowestCommonAncestorOfABinaryTree {
 
     public static void main(String[] args) {
-        Solution solution = new AddTwoNumbers().new Solution();
+        Solution solution = new LowestCommonAncestorOfABinaryTree().new Solution();
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
     /**
-     * Definition for singly-linked list.
-     * public class ListNode {
+     * Definition for a binary tree node.
+     * public class TreeNode {
      * int val;
-     * ListNode next;
-     * ListNode() {}
-     * ListNode(int val) { this.val = val; }
-     * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode(int x) { val = x; }
      * }
      */
     class Solution {
-        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-            ListNode fakeHead = new ListNode(-1);
-            ListNode r = fakeHead;
-            int carry = 0;
-            int sum = 0;
-            while (l1 != null && l2 != null) {
-                sum = l1.val + l2.val + carry;
-                carry = sum / 10;
-                r.next = new ListNode(sum % 10);
-                r = r.next;
-                l1 = l1.next;
-                l2 = l2.next;
+
+        private TreeNode ans;
+
+        public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+            contains(root, p, q);
+            return ans;
+        }
+
+        private boolean contains(TreeNode node, TreeNode p, TreeNode q) {
+            if (node == null) {
+                return false;
             }
-            if (l1 != null) {
-                while (l1 != null) {
-                    sum = l1.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l1 = l1.next;
-                }
-            } else {
-                while (l2 != null) {
-                    sum = l2.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l2 = l2.next;
-                }
+            boolean lc = contains(node.left, p, q);
+            boolean rc = contains(node.right, p, q);
+            boolean curr = (lc && rc) || ((node.val == p.val) && (lc || rc)) || ((node.val == q.val) && (lc || rc));
+            if (curr) {
+                ans = node;
             }
-            if (carry != 0) {
-                r.next = new ListNode(carry);
-            }
-            return fakeHead.next;
+            return (node.val == p.val) || (node.val == q.val) || lc || rc;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
 
-    public class ListNode {
+    public static class TreeNode {
         int val;
-        ListNode next;
+        TreeNode left;
+        TreeNode right;
 
-        ListNode() {
-        }
-
-        ListNode(int val) {
-            this.val = val;
-        }
-
-        ListNode(int val, ListNode next) {
-            this.val = val;
-            this.next = next;
+        TreeNode(int x) {
+            val = x;
         }
     }
 
@@ -209,4 +188,17 @@ public class AddTwoNumbers {
         System.out.println();
     }
 
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
 }

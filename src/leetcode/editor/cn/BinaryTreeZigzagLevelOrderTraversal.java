@@ -1,28 +1,25 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
-//
-// 注意：答案中不可以包含重复的三元组。 
+//给你二叉树的根节点 root ，返回其节点值的 锯齿形层序遍历 。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：root = [3,9,20,null,null,15,7]
+//输出：[[3],[20,9],[15,7]]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
+//输入：root = [1]
+//输出：[[1]]
 // 
 //
 // 示例 3： 
 //
 // 
-//输入：nums = [0]
+//输入：root = []
 //输出：[]
 // 
 //
@@ -31,70 +28,73 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// 树中节点数目在范围 [0, 2000] 内 
+// -100 <= Node.val <= 100 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 树 广度优先搜索 二叉树 👍 613 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class BinaryTreeZigzagLevelOrderTraversal {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new BinaryTreeZigzagLevelOrderTraversal().new Solution();
     }
 
-    //leetcode submit region begin(Prohibit modification and deletion)
-    class Solution {
+//leetcode submit region begin(Prohibit modification and deletion)
 
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     * int val;
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode() {}
+     * TreeNode(int val) { this.val = val; }
+     * TreeNode(int val, TreeNode left, TreeNode right) {
+     * this.val = val;
+     * this.left = left;
+     * this.right = right;
+     * }
+     * }
+     */
+    class Solution {
+        public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+            if (root == null) {
                 return new ArrayList<>();
             }
-            Arrays.sort(nums);
-
+            Queue<TreeNode> buf = new LinkedList<>();
+            Queue<TreeNode> lineBuf = new LinkedList<>();
             List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
+            buf.offer(root);
+            /*
+             * 官方题解中也是采用这种不断变化布尔值的方式
+             */
+            boolean asc = true;
+            while (!buf.isEmpty()) {
+                LinkedList<Integer> lineList = new LinkedList<>();
+                while (!buf.isEmpty()) {
+                    TreeNode node = buf.poll();
+                    lineBuf.offer(node);
+                    // 在生成结果时做取反判断，其他逻辑和按层遍历一致
+                    if (asc) {
+                        lineList.offerLast(node.val);
+                    } else {
+                        lineList.offerFirst(node.val);
+                    }
                 }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
+                res.add(lineList);
+                asc = !asc;
+                while (!lineBuf.isEmpty()) {
+                    TreeNode node = lineBuf.poll();
+                    if (node.left != null) {
+                        buf.offer(node.left);
+
                     }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
+                    if (node.right != null) {
+                        buf.offer(node.right);
                     }
                 }
             }
@@ -103,6 +103,24 @@ public class ThreeSum {
     }
 //leetcode submit region end(Prohibit modification and deletion)
 
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
 
     private static void print(boolean b) {
         System.out.println(b);

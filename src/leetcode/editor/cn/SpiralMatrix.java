@@ -1,29 +1,19 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
-//
-// 注意：答案中不可以包含重复的三元组。 
+//给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+//输出：[1,2,3,6,9,8,7,4,5]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：nums = [0]
-//输出：[]
+//输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+//输出：[1,2,3,4,8,12,11,10,9,5,6,7]
 // 
 //
 // 
@@ -31,74 +21,60 @@
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// m == matrix.length 
+// n == matrix[i].length 
+// 1 <= m, n <= 10 
+// -100 <= matrix[i][j] <= 100 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 数组 矩阵 模拟 👍 1046 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class SpiralMatrix {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new SpiralMatrix().new Solution();
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
 
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
-                return new ArrayList<>();
-            }
-            Arrays.sort(nums);
-
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
+        public List<Integer> spiralOrder(int[][] matrix) {
+            List<Integer> res = new ArrayList<>();
+            int i = 0, j = 0, snapI = i, snapJ = j;
+            do {
+                snapI = i;
+                snapJ = j;
+                while (canTravel(matrix, i, j + 1)) {
+                    res.add(matrix[i][j]);
+                    matrix[i][j] = Integer.MAX_VALUE;
+                    j++;
                 }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
-                    }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
-                    }
+                while (canTravel(matrix, i + 1, j)) {
+                    res.add(matrix[i][j]);
+                    matrix[i][j] = Integer.MAX_VALUE;
+                    i++;
                 }
-            }
+                while (canTravel(matrix, i, j - 1)) {
+                    res.add(matrix[i][j]);
+                    matrix[i][j] = Integer.MAX_VALUE;
+                    j--;
+                }
+                while (canTravel(matrix, i - 1, j)) {
+                    res.add(matrix[i][j]);
+                    matrix[i][j] = Integer.MAX_VALUE;
+                    i--;
+                }
+            } while (i != snapI || j != snapJ);
+            res.add(matrix[i][j]);
             return res;
+        }
+
+        private boolean canTravel(int[][] matrix, int i, int j) {
+            return i >= 0 && j >= 0 && i < matrix.length &&
+                    j < matrix[0].length && matrix[i][j] != Integer.MAX_VALUE;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

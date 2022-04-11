@@ -38,37 +38,32 @@ public class TrappingRainWater {
 
     public static void main(String[] args) {
         Solution solution = new TrappingRainWater().new Solution();
-        int[] arrays = new int[]{4, 2, 3};
+        int[] arrays = new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
         print(solution.trap(arrays));
     }
 
-//leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
-    public int trap(int[] height) {
-        if (height == null || height.length == 0) {
-            return 0;
-        }
-        int i = 0;
-        int partSum = 0;
-        int sum = 0;
-        while (i < height.length - 1) {
-            int j = i + 1;
-            while (j < height.length && height[i] > height[j]) {
-                partSum += height[i] - height[j];
-                j++;
+    //leetcode submit region begin(Prohibit modification and deletion)
+    class Solution {
+        public int trap(int[] height) {
+            int ans = 0;
+            Deque<Integer> stack = new LinkedList<Integer>();
+            int n = height.length;
+            for (int i = 0; i < n; ++i) {
+                while (!stack.isEmpty() && height[i] > height[stack.peek()]) {
+                    int top = stack.pop();
+                    if (stack.isEmpty()) {
+                        break;
+                    }
+                    int left = stack.peek();
+                    int currWidth = i - left - 1;
+                    int currHeight = Math.min(height[left], height[i]) - height[top];
+                    ans += currWidth * currHeight;
+                }
+                stack.push(i);
             }
-            if (j >= height.length) {
-                partSum = 0;
-                i++;
-            } else {
-                sum += partSum;
-                partSum = 0;
-                i = j;
-            }
+            return ans;
         }
-        return sum;
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
 

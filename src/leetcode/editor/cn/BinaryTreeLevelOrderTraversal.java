@@ -1,31 +1,26 @@
-//给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。 
-//
-// 请你将两个数相加，并以相同形式返回一个表示和的链表。 
-//
-// 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。 
+//给你二叉树的根节点 root ，返回其节点值的 层序遍历 。 （即逐层地，从左到右访问所有节点）。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：l1 = [2,4,3], l2 = [5,6,4]
-//输出：[7,0,8]
-//解释：342 + 465 = 807.
+//输入：root = [3,9,20,null,null,15,7]
+//输出：[[3],[9,20],[15,7]]
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：l1 = [0], l2 = [0]
-//输出：[0]
+//输入：root = [1]
+//输出：[[1]]
 // 
 //
 // 示例 3： 
 //
 // 
-//输入：l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
-//输出：[8,9,9,9,0,0,0,1]
+//输入：root = []
+//输出：[]
 // 
 //
 // 
@@ -33,87 +28,87 @@
 // 提示： 
 //
 // 
-// 每个链表中的节点数在范围 [1, 100] 内 
-// 0 <= Node.val <= 9 
-// 题目数据保证列表表示的数字不含前导零 
+// 树中节点数目在范围 [0, 2000] 内 
+// -1000 <= Node.val <= 1000 
 // 
-// Related Topics 递归 链表 数学 👍 7701 👎 0
+// Related Topics 树 广度优先搜索 二叉树 👍 1256 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class AddTwoNumbers {
+public class BinaryTreeLevelOrderTraversal {
 
     public static void main(String[] args) {
-        Solution solution = new AddTwoNumbers().new Solution();
+        Solution solution = new BinaryTreeLevelOrderTraversal().new Solution();
     }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
     /**
-     * Definition for singly-linked list.
-     * public class ListNode {
+     * Definition for a binary tree node.
+     * public class TreeNode {
      * int val;
-     * ListNode next;
-     * ListNode() {}
-     * ListNode(int val) { this.val = val; }
-     * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode() {}
+     * TreeNode(int val) { this.val = val; }
+     * TreeNode(int val, TreeNode left, TreeNode right) {
+     * this.val = val;
+     * this.left = left;
+     * this.right = right;
+     * }
      * }
      */
     class Solution {
-        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-            ListNode fakeHead = new ListNode(-1);
-            ListNode r = fakeHead;
-            int carry = 0;
-            int sum = 0;
-            while (l1 != null && l2 != null) {
-                sum = l1.val + l2.val + carry;
-                carry = sum / 10;
-                r.next = new ListNode(sum % 10);
-                r = r.next;
-                l1 = l1.next;
-                l2 = l2.next;
+        public List<List<Integer>> levelOrder(TreeNode root) {
+            if (root == null) {
+                return new ArrayList<>();
             }
-            if (l1 != null) {
-                while (l1 != null) {
-                    sum = l1.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l1 = l1.next;
+            Queue<TreeNode> buf = new LinkedList<>();
+            Queue<TreeNode> lineBuf = new LinkedList<>();
+            List<List<Integer>> res = new ArrayList<>();
+            buf.offer(root);
+            while (!buf.isEmpty()) {
+                List<Integer> lineList = new LinkedList<>();
+                while (!buf.isEmpty()) {
+                    TreeNode node = buf.poll();
+                    lineBuf.offer(node);
+                    lineList.add(node.val);
                 }
-            } else {
-                while (l2 != null) {
-                    sum = l2.val + carry;
-                    carry = sum / 10;
-                    r.next = new ListNode(sum % 10);
-                    r = r.next;
-                    l2 = l2.next;
+                res.add(lineList);
+                while (!lineBuf.isEmpty()) {
+                    TreeNode node = lineBuf.poll();
+                    if (node.left != null) {
+                        buf.offer(node.left);
+
+                    }
+                    if (node.right != null) {
+                        buf.offer(node.right);
+                    }
                 }
             }
-            if (carry != 0) {
-                r.next = new ListNode(carry);
-            }
-            return fakeHead.next;
+            return res;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
 
-    public class ListNode {
+    public static class TreeNode {
         int val;
-        ListNode next;
+        TreeNode left;
+        TreeNode right;
 
-        ListNode() {
+        TreeNode() {
         }
 
-        ListNode(int val) {
+        TreeNode(int val) {
             this.val = val;
         }
 
-        ListNode(int val, ListNode next) {
+        TreeNode(int val, TreeNode left, TreeNode right) {
             this.val = val;
-            this.next = next;
+            this.left = left;
+            this.right = right;
         }
     }
 
@@ -209,4 +204,17 @@ public class AddTwoNumbers {
         System.out.println();
     }
 
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
 }

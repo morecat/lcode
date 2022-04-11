@@ -1,104 +1,69 @@
-//给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重
-//复的三元组。 
-//
-// 注意：答案中不可以包含重复的三元组。 
+//以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返
+//回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：nums = [-1,0,1,2,-1,-4]
-//输出：[[-1,-1,2],[-1,0,1]]
+//输入：intervals = [[1,3],[2,6],[8,10],[15,18]]
+//输出：[[1,6],[8,10],[15,18]]
+//解释：区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：nums = []
-//输出：[]
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：nums = [0]
-//输出：[]
-// 
+//输入：intervals = [[1,4],[4,5]]
+//输出：[[1,5]]
+//解释：区间 [1,4] 和 [4,5] 可被视为重叠区间。 
 //
 // 
 //
 // 提示： 
 //
 // 
-// 0 <= nums.length <= 3000 
-// -10⁵ <= nums[i] <= 10⁵ 
+// 1 <= intervals.length <= 10⁴ 
+// intervals[i].length == 2 
+// 0 <= starti <= endi <= 10⁴ 
 // 
-// Related Topics 数组 双指针 排序 👍 4522 👎 0
+// Related Topics 数组 排序 👍 1421 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ThreeSum {
+public class MergeIntervals {
 
     public static void main(String[] args) {
-        Solution solution = new ThreeSum().new Solution();
-        print(solution.threeSum(new int[]{0, 0, 0}));
-        print(solution.threeSum(new int[]{0, 0, 0, 0, 0}));
-        print(solution.threeSum(new int[]{-1, 0, 1}));
-        print(solution.threeSum(new int[]{-2, 1, 1}));
-        print(solution.threeSum(new int[]{-1, 0, 1, 2, -1, -4}));
+        Solution solution = new MergeIntervals().new Solution();
+        int[][] ints = new int[][]{{4, 5}, {4, 6}};
+        int[][] ints1 = new int[][]{{1, 3}, {0, 2}, {2, 3}, {4, 6}, {4, 5}};
+        print(solution.merge(ints));
+        print(solution.merge(ints1));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-
-        /*
-         * 双指针
-         */
-        public List<List<Integer>> threeSum(int[] nums) {
-            if (nums.length < 3) {
-                return new ArrayList<>();
+        public int[][] merge(int[][] intervals) {
+            if (intervals == null || intervals.length == 0 || intervals[0].length == 0) {
+                return new int[0][0];
             }
-            Arrays.sort(nums);
-
-            List<List<Integer>> res = new ArrayList<>();
-            for (int i = 0; i < nums.length - 2; i++) {
-                if (i != 0 && nums[i] == nums[i - 1]) {
-                    continue;
+            Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+            List<int[]> res = new LinkedList<>();
+            res.add(intervals[0]);
+            int i = 0, j = 0;
+            while (j < intervals.length) {
+                if (res.get(i)[1] >= intervals[j][0]) {
+                    res.get(i)[1] = Math.max(res.get(i)[1], intervals[j][1]);
+                } else {
+                    res.add(new int[]{intervals[j][0], intervals[j][1]});
+                    i++;
                 }
-                int k = nums.length - 1;
-                for (int j = i + 1; j < nums.length; j++) {
-                    /*
-                     * 这里的 j != i + 1 主要是为了防止第一个遍历元素和外围循环的数据混合
-                     */
-                    if (j != i + 1 && nums[j] == nums[j - 1]) {
-                        continue;
-                    }
-                    /*
-                     * 双指针在移动过程中，都需要保证前后两个指针的相对位置，因此需要 j < k 条件
-                     */
-                    while (j < k && nums[j] + nums[k] + nums[i] > 0) {
-                        k--;
-                    }
-                    /*
-                     * 当 j 和 k 指向同一个元素的时候，应该跳过，否则最终结果数量会偏多
-                     * 比如测试用例 [-1, 0, 1, 2, -1, -4]中会出现 [-4, 2, 2]这样的错误结果
-                     */
-                    if (j == k) {
-                        continue;
-                    }
-                    if (nums[j] + nums[k] + nums[i] == 0) {
-                        List<Integer> list = new ArrayList<>();
-                        list.add(nums[i]);
-                        list.add(nums[j]);
-                        list.add(-nums[i] - nums[j]);
-                        res.add(list);
-                    }
-                }
+                j++;
             }
-            return res;
+            int[][] r = new int[0][0];
+            return res.toArray(r);
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
