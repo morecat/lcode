@@ -1,78 +1,61 @@
-//给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。 
-//
-// 在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。 
-//
-// 返回 你能获得的 最大 利润 。 
+//给两个整数数组 nums1 和 nums2 ，返回 两个数组中 公共的 、长度最长的子数组的长度 。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：prices = [7,1,5,3,6,4]
-//输出：7
-//解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4 。
-//     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3 。
-//     总利润为 4 + 3 = 7 。 
+//输入：nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+//输出：3
+//解释：长度最长的公共子数组是 [3,2,1] 。
+// 
 //
 // 示例 2： 
 //
 // 
-//输入：prices = [1,2,3,4,5]
-//输出：4
-//解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4 。
-//     总利润为 4 。 
-//
-// 示例 3： 
-//
+//输入：nums1 = [0,0,0,0,0], nums2 = [0,0,0,0,0]
+//输出：5
 // 
-//输入：prices = [7,6,4,3,1]
-//输出：0
-//解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0 。 
 //
 // 
 //
 // 提示： 
 //
 // 
-// 1 <= prices.length <= 3 * 10⁴ 
-// 0 <= prices[i] <= 10⁴ 
+// 1 <= nums1.length, nums2.length <= 1000 
+// 0 <= nums1[i], nums2[i] <= 100 
 // 
-// Related Topics 贪心 数组 动态规划 👍 1670 👎 0
+//
+// Related Topics 数组 二分查找 动态规划 滑动窗口 哈希函数 滚动哈希 👍 1054 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class BestTimeToBuyAndSellStockIi {
+public class MaximumLengthOfRepeatedSubarray {
 
     public static void main(String[] args) {
-        Solution solution = new BestTimeToBuyAndSellStockIi().new Solution();
+        Solution solution = new MaximumLengthOfRepeatedSubarray().new Solution();
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public int maxProfit(int[] prices) {
-            // 这道题其实有一个突破点，就是意识到只要T买入，然后第T+1卖出时不亏钱就卖，一直这样操作，最终一定会获得最大收益
-            // 像是套用在本题上的贪心算法和动态规划底层都是这个原理
-            // 这里的dp[i][0]表示第i天持有现金时手头的最大现金，dp[i][1]表示第i天持有股票时手头的最大现金
-            // 1.动态规划解法
-//            int[][] dp = new int[prices.length][2];
-//            dp[0][0] = 0;
-//            dp[0][1] = -prices[0];
-//            for (int i = 1; i < prices.length; i++) {
-//                dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
-//                dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
-//            }
-//            return dp[dp.length - 1][0];
-            // 2.见好就收算法
-            int sum = 0;
-            for (int i = 0; i < prices.length - 1; i++) {
-                if (prices[i] < prices[i + 1]) {
-                    sum += prices[i + 1] - prices[i];
+        public int findLength(int[] nums1, int[] nums2) {
+            // 官方提供了4种解法：
+            //1 暴力解法 o（n^3）复杂度
+            //2 动态规划，某公共子串去掉第一位后一定还是公共子串
+            //3 滑动窗口，a，b两个数组，先b向后错开，然后for循环检查是否有相同子串，然后b向前错开，然后for循环检查是否有相同子串（这里很容易只向一个方向错开，导致漏掉一些情况）
+            //4 二分查找+hash，通过一个算法可以快速识别出两个数组是否拥有长度为LEN的公共子串，此时根据上面函数的结果，通过二分查找找到合适的Len
+            //下面使用 动态规划 解决，dp[i][j]表示以nums1[i]开头的子数组和nums2[j]开头的子数组的最大公共子数组的长度
+            int[][] dp = new int[nums1.length + 1][nums2.length + 1];
+            int ret = 0;
+            for (int i = nums1.length - 1; i >= 0; i--) {
+                for (int j = nums2.length - 1; j >= 0; j--) {
+                    dp[i][j] = nums1[i] == nums2[j] ? dp[i + 1][j + 1] + 1 : 0;
+                    ret = Math.max(ret, dp[i][j]);
                 }
             }
-            return sum;
+            return ret;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)

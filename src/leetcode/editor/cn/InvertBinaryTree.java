@@ -28,41 +28,39 @@ package leetcode.editor.cn;
 
 import java.util.*;
 
-public class InvertBinaryTree{
+public class InvertBinaryTree {
     public static void main(String[] args) {
         Solution solution = new InvertBinaryTree().new Solution();
     }
-    
+
 //leetcode submit region begin(Prohibit modification and deletion)
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
-    public TreeNode invertTree(TreeNode root) {
-        if (root == null) {
-            return root;
-        } else {
-            invertTree(root.left);
-            invertTree(root.right);
+
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     * int val;
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode() {}
+     * TreeNode(int val) { this.val = val; }
+     * TreeNode(int val, TreeNode left, TreeNode right) {
+     * this.val = val;
+     * this.left = left;
+     * this.right = right;
+     * }
+     * }
+     */
+    class Solution {
+        public TreeNode invertTree(TreeNode root) {
+            if (root == null || (root.left == null && root.right == null)) {
+                return root;
+            }
             TreeNode tmp = root.left;
-            root.left = root.right;
-            root.right = tmp;
+            root.left = invertTree(root.right);
+            root.right = invertTree(tmp);
+            return root;
         }
-        return root;
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
     public static class TreeNode {
