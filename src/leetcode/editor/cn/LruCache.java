@@ -93,75 +93,163 @@ public class LruCache {
             private int val;
             private Node next;
             private Node prev;
+
+            public Node() {
+
+            }
+
+            public Node(int key, int val) {
+                this.key = key;
+                this.val = val;
+            }
         }
 
-        Map<Integer, Node> hashMap;
-        /**
-         * 使用假头节点的原因是“在get()中需要将节点移动到链表头，且移动的节点恰好是真头节点，如果没有假头那么node.prev.next将抛出NPE”
-         */
-        Node fakeHeader;
-        /**
-         * 使用假尾节点的原因是"在put()方法中需要淘汰尾节点"
-         */
-        Node fakeTailer;
-        int capacity;
+        // 第一版代码
+//        Map<Integer, Node> hashMap;
+//        /**
+//         * 使用假头节点的原因是“在get()中需要将节点移动到链表头，且移动的节点恰好是真头节点，如果没有假头那么node.prev.next将抛出NPE”
+//         */
+//        Node fakeHeader;
+//        /**
+//         * 使用假尾节点的原因是"在put()方法中需要淘汰尾节点"
+//         */
+//        Node fakeTailer;
+//        int capacity;
+//
+//        public LRUCache(int capacity) {
+//            this.capacity = capacity;
+//            hashMap = new HashMap<>();
+//            fakeHeader = new Node();
+//            fakeTailer = new Node();
+//            fakeHeader.key = -1;
+//            fakeTailer.key = -2;
+//            fakeHeader.next = fakeTailer;
+//            fakeTailer.prev = fakeHeader;
+//        }
+//
+//        public int get(int key) {
+//            Node node = hashMap.get(key);
+//            if (node == null) {
+//                return -1;
+//            }
+//            node.prev.next = node.next;
+//            node.next.prev = node.prev;
+//            node.next = fakeHeader.next;
+//            node.prev = fakeHeader;
+//            fakeHeader.next.prev = node;
+//            fakeHeader.next = node;
+//
+//            return node.val;
+//        }
+//
+//        public void put(int key, int value) {
+//            // 如果key存在，那么更新Node的val，更新Node在链表中的位置
+//            Node node = hashMap.get(key);
+//            if (node != null) {
+//                node.val = value;
+//                // 移除node原来所在的位置
+//                Node prev = node.prev;
+//                Node next = node.next;
+//                next.prev = node.prev;
+//                prev.next = node.next;
+//            } else {
+//                // 新建节点
+//                node = new Node();
+//                node.key = key;
+//                node.val = value;
+//                hashMap.put(key, node);
+//            }
+//            // 插入
+//            node.next = fakeHeader.next;
+//            node.prev = fakeHeader;
+//            fakeHeader.next.prev = node;
+//            fakeHeader.next = node;
+//
+//            // 移除超容量节点
+//            if (hashMap.size() > capacity) {
+//                Node toRemove = fakeTailer.prev;
+//                toRemove.next.prev = toRemove.prev;
+//                toRemove.prev.next = fakeTailer;
+//                hashMap.remove(toRemove.key);
+//            }
+//        }
+
+
+        // 第二版代码
+        private final Map<Integer, Node> map;
+
+        private final Node header;
+
+        private final Node tail;
+
+        private final int capacity;
+
+        private int used;
 
         public LRUCache(int capacity) {
+            this.used = 0;
             this.capacity = capacity;
-            hashMap = new HashMap<>();
-            fakeHeader = new Node();
-            fakeTailer = new Node();
-            fakeHeader.key = -1;
-            fakeTailer.key = -2;
-            fakeHeader.next = fakeTailer;
-            fakeTailer.prev = fakeHeader;
+            this.header = new Node();
+            this.tail = new Node();
+            this.map = new HashMap<>();
+            this.header.next = this.tail;
+            this.tail.prev = this.header;
         }
 
         public int get(int key) {
-            Node node = hashMap.get(key);
+            Node node = this.map.get(key);
             if (node == null) {
                 return -1;
             }
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
-            node.next = fakeHeader.next;
-            node.prev = fakeHeader;
-            fakeHeader.next.prev = node;
-            fakeHeader.next = node;
-
+            moveToHeader(node);
             return node.val;
         }
 
         public void put(int key, int value) {
-            // 如果key存在，那么更新Node的val，更新Node在链表中的位置
-            Node node = hashMap.get(key);
-            if (node != null) {
-                node.val = value;
-                // 移除node原来所在的位置
-                Node prev = node.prev;
-                Node next = node.next;
-                next.prev = node.prev;
-                prev.next = node.next;
+            Node node = this.map.get(key);
+            if (node == null) {
+                node = new Node(key, value);
+                if (this.used >= this.capacity) {
+                    Node toDel = deleteTail();
+                    this.map.remove(toDel.key);
+                    this.used--;
+                }
+                insertHeader(node);
+                this.map.put(key, node);
+                this.used++;
             } else {
-                // 新建节点
-                node = new Node();
-                node.key = key;
                 node.val = value;
-                hashMap.put(key, node);
+                moveToHeader(node);
             }
-            // 插入
-            node.next = fakeHeader.next;
-            node.prev = fakeHeader;
-            fakeHeader.next.prev = node;
-            fakeHeader.next = node;
+        }
 
-            // 移除超容量节点
-            if (hashMap.size() > capacity) {
-                Node toRemove = fakeTailer.prev;
-                toRemove.next.prev = toRemove.prev;
-                toRemove.prev.next = fakeTailer;
-                hashMap.remove(toRemove.key);
-            }
+        private void delete(Node node) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+        }
+
+        private void insert(Node node, Node loc) {
+            Node prev = loc;
+            Node next = loc.next;
+            node.prev = prev;
+            node.next = next;
+            prev.next = node;
+            next.prev = node;
+        }
+
+        private Node deleteTail() {
+            Node toDel = this.tail.prev;
+            delete(toDel);
+            return toDel;
+        }
+
+        private void insertHeader(Node node) {
+            insert(node, this.header);
+        }
+
+        private void moveToHeader(Node node) {
+            delete(node);
+            insertHeader(node);
         }
     }
 

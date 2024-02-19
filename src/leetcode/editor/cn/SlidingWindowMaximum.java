@@ -1,36 +1,31 @@
-//给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。 
+//给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位
+//。 
 //
-// 如果反转后整数超过 32 位的有符号整数的范围 [−2³¹, 231 − 1] ，就返回 0。 
-//假设环境不允许存储 64 位整数（有符号或无符号）。
+// 返回 滑动窗口中的最大值 。 
 //
 // 
 //
 // 示例 1： 
 //
 // 
-//输入：x = 123
-//输出：321
+//输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+//输出：[3,3,5,5,6,7]
+//解释：
+//滑动窗口的位置                最大值
+//---------------               -----
+//[1  3  -1] -3  5  3  6  7       3
+// 1 [3  -1  -3] 5  3  6  7       3
+// 1  3 [-1  -3  5] 3  6  7       5
+// 1  3  -1 [-3  5  3] 6  7       5
+// 1  3  -1  -3 [5  3  6] 7       6
+// 1  3  -1  -3  5 [3  6  7]      7
 // 
 //
 // 示例 2： 
 //
 // 
-//输入：x = -123
-//输出：-321
-// 
-//
-// 示例 3： 
-//
-// 
-//输入：x = 120
-//输出：21
-// 
-//
-// 示例 4： 
-//
-// 
-//输入：x = 0
-//输出：0
+//输入：nums = [1], k = 1
+//输出：[1]
 // 
 //
 // 
@@ -38,35 +33,48 @@
 // 提示： 
 //
 // 
-// -2³¹ <= x <= 2³¹ - 1 
+// 1 <= nums.length <= 10⁵ 
+// -10⁴ <= nums[i] <= 10⁴ 
+// 1 <= k <= nums.length 
 // 
-// Related Topics 数学 👍 3430 👎 0
+// Related Topics 队列 数组 滑动窗口 单调队列 堆（优先队列） 👍 1547 👎 0
 
 package leetcode.editor.cn;
 
 import java.util.*;
 
-public class ReverseInteger {
+public class SlidingWindowMaximum {
 
     public static void main(String[] args) {
-        Solution solution = new ReverseInteger().new Solution();
-        System.out.println(-9 % 10);
+        Solution solution = new SlidingWindowMaximum().new Solution();
+        print(solution.maxSlidingWindow(new int[]{1, 3, -1, -3, 5, 3, 6, 7}, 3));
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
-        public int reverse(int x) {
-            int sum = 0;
-            while (x != 0) {
-                int single = x % 10;
-                x /= 10;
-                if (sum < Integer.MIN_VALUE / 10 || sum > Integer.MAX_VALUE / 10) {
-                    return 0;
+        public int[] maxSlidingWindow(int[] nums, int k) {
+            int[] res = new int[nums.length - k + 1];
+            Deque<Integer> stack = new LinkedList<>();
+            for (int i = 0; i < k; i++) {
+                while (!stack.isEmpty() && nums[stack.peekLast()] < nums[i]) {
+                    stack.pollLast();
                 }
-                sum *= 10;
-                sum += single;
+                stack.offerLast(i);
             }
-            return sum;
+            res[0] = stack.peekFirst() == null ? Integer.MIN_VALUE : nums[stack.peekFirst()];
+
+            for (int i = k; i < nums.length; i++) {
+                while (!stack.isEmpty() && nums[stack.peekLast()] < nums[i]) {
+                    stack.pollLast();
+                }
+                stack.offerLast(i);
+                // 清理过期数据
+                while (!stack.isEmpty() && stack.peekFirst() < i - k + 1) {
+                    stack.pollFirst();
+                }
+                res[i - k + 1] = stack.peekFirst() == null ? Integer.MIN_VALUE : nums[stack.peekFirst()];
+            }
+            return res;
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
@@ -164,4 +172,17 @@ public class ReverseInteger {
         System.out.println();
     }
 
+    private static void print(int[][] arrays) {
+        for (int[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
+
+    private static void print(String[][] arrays) {
+        for (String[] item : arrays) {
+            System.out.println(Arrays.toString(item));
+        }
+        System.out.println();
+    }
 }
