@@ -44,51 +44,55 @@
 
 package leetcode.editor.cn;
 
-import java.util.*;
+import java.util.Collection;
 
-public class PathSum{
+public class PathSum {
     public static void main(String[] args) {
         Solution solution = new PathSum().new Solution();
         TreeNode root = new TreeNode(1, new TreeNode(2), null);
         print(solution.hasPathSum(root, 1));
     }
-    
-//leetcode submit region begin(Prohibit modification and deletion)
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
-class Solution {
-    public boolean hasPathSum(TreeNode root, int targetSum) {
-        if (root == null) {
-            return false;
-        }
-        return hasPathSumPart(root, targetSum);
-    }
 
-    private boolean hasPathSumPart(TreeNode node, int targetSum) {
-        if (node.left == null && node.right == null) {
-            return targetSum == node.val;
-        } else if (node.left != null && node.right == null) {
-            return hasPathSumPart(node.left, targetSum - node.val);
-        } else if (node.left == null && node.right != null) {
-            return hasPathSumPart(node.right, targetSum - node.val);
-        } else {
-            return hasPathSumPart(node.left, targetSum - node.val) || hasPathSumPart(node.right, targetSum - node.val);
+//leetcode submit region begin(Prohibit modification and deletion)
+
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     * int val;
+     * TreeNode left;
+     * TreeNode right;
+     * TreeNode() {}
+     * TreeNode(int val) { this.val = val; }
+     * TreeNode(int val, TreeNode left, TreeNode right) {
+     * this.val = val;
+     * this.left = left;
+     * this.right = right;
+     * }
+     * }
+     */
+    class Solution {
+        public boolean hasPathSum(TreeNode root, int targetSum) {
+            if (root == null) {
+                return false;
+            }
+            return hasPathSumPart(root, targetSum);
+        }
+
+        private boolean hasPathSumPart(TreeNode node, int targetSum) {
+            if (node.left == null && node.right == null) {
+                return targetSum == node.val;
+            }
+            boolean left = false;
+            boolean right = false;
+            if (node.left != null) {
+                left = hasPathSumPart(node.left, targetSum - node.val);
+            }
+            if (node.right != null) {
+                right = hasPathSumPart(node.right, targetSum - node.val);
+            }
+            return left || right;
         }
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
     public static class TreeNode {

@@ -39,22 +39,19 @@ public class MajorityElement{
 //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public int majorityElement(int[] nums) {
-        int max = 0;
-        HashMap<Integer, Integer> hashMap = new HashMap<>();
-        for (int num : nums) {
-            Integer i = hashMap.get(num);
-            if (i == null) {
-                i = 1;
-            } else {
-                i = i + 1;
+        int c = nums[0];
+        int sum = 0;
+        for (int num: nums){
+            if (sum == 0){
+                c = num;
             }
-            hashMap.put(num, i);
-            if (i > nums.length / 2) {
-                max = num;
-                break;
+            if (num != c){
+                sum ++;
+            } else {
+                sum --;
             }
         }
-        return max;
+        return c;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

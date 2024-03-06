@@ -31,43 +31,38 @@
 
 package leetcode.editor.cn;
 
-import java.util.*;
+import java.util.Collection;
 
-public class LongestCommonPrefix{
+public class LongestCommonPrefix {
     public static void main(String[] args) {
         Solution solution = new LongestCommonPrefix().new Solution();
-        String[] strs = {"flower","flow","flight"};
+        String[] strs = {"flower", "flow", "flight"};
         String[] strs1 = {"a"};
         print(solution.longestCommonPrefix(strs));
         print(solution.longestCommonPrefix(strs1));
     }
 
-//leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
-    public String longestCommonPrefix(String[] strs) {
-        if (strs == null) {
-            return "";
-        }
-        int i = 0;
-        outter:
-        while (true) {
-            if (strs[0].length() <= i) {
-                break;
+    //leetcode submit region begin(Prohibit modification and deletion)
+    class Solution {
+        public String longestCommonPrefix(String[] strs) {
+            if (strs == null || strs.length == 0) {
+                return "";
             }
-            char c = strs[0].charAt(i);
-            for (String str : strs) {
-                if (i >= str.length()) {
-                    break outter;
+            StringBuilder builder = new StringBuilder();
+            for (int j = 0; j < strs[0].length(); j++) {
+                for (int i = 1; i < strs.length; i++) {
+                    if (j >= strs[i].length()) {
+                        return builder.toString();
+                    }
+                    if (strs[i].charAt(j) != strs[0].charAt(j)) {
+                        return builder.toString();
+                    }
                 }
-                if (str.charAt(i) != c) {
-                    break outter;
-                }
+                builder.append(strs[0].charAt(j));
             }
-            i++;
+            return builder.toString();
         }
-        return strs[0].substring(0, i);
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
 
