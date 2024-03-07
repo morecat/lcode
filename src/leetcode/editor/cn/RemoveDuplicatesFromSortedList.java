@@ -33,7 +33,7 @@ package leetcode.editor.cn;
 
 import java.util.*;
 
-public class RemoveDuplicatesFromSortedList{
+public class RemoveDuplicatesFromSortedList {
     public static void main(String[] args) {
         Solution solution = new RemoveDuplicatesFromSortedList().new Solution();
         ListNode r = solution.deleteDuplicates(new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(3, null)))));
@@ -43,34 +43,37 @@ public class RemoveDuplicatesFromSortedList{
         ListNode r4 = solution.deleteDuplicates(new ListNode(1, null));
         System.out.println();
     }
-    
+
 //leetcode submit region begin(Prohibit modification and deletion)
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
-class Solution {
-    public ListNode deleteDuplicates(ListNode head) {
-        if (head == null) {
-            return null;
-        }
-        ListNode pointer = head;
-        while (pointer.next != null) {
-            if (pointer.val == pointer.next.val) {
-                pointer.next = pointer.next.next;
-            } else {
-                pointer = pointer.next;
+
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     * int val;
+     * ListNode next;
+     * ListNode() {}
+     * ListNode(int val) { this.val = val; }
+     * ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode deleteDuplicates(ListNode head) {
+            if (head == null) {
+                return head;
             }
+            ListNode before = head;
+            ListNode curr = head;
+            while (curr != null) {
+                if (curr.val != before.val) {
+                    before.next = curr;
+                    before = curr;
+                }
+                curr = curr.next;
+            }
+            before.next = null;
+            return head;
         }
-        return head;
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
 
     public static class ListNode {
@@ -101,7 +104,7 @@ class Solution {
     private static void print(float f) {
         System.out.println(f);
     }
-    
+
     private static void print(long l) {
         System.out.println(l);
     }
